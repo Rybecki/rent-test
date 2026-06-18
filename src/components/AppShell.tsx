@@ -27,15 +27,15 @@ export function AppShell() {
 
   const tabBtn = (active: boolean, compact?: boolean) =>
     [
-      'inline-flex items-center justify-center gap-1.5 rounded-xl border py-2.5 px-1.5 font-display font-semibold transition-colors sm:gap-2 sm:px-2',
-      compact ? 'text-[10px] leading-tight sm:text-xs' : 'text-xs sm:text-sm',
+      'inline-flex min-w-0 items-center justify-center gap-1 rounded-xl border px-1 py-2.5 font-display font-semibold transition-colors sm:gap-2 sm:px-2',
+      compact ? 'text-[9px] leading-tight sm:text-xs' : 'text-[10px] sm:text-sm',
       active
         ? 'border-primary/90 bg-primary text-dark shadow-md'
         : 'border-white/15 bg-white/10 text-white/90 hover:border-white/25 hover:bg-white/15',
     ].join(' ')
 
   return (
-    <div className="mx-auto flex min-h-dvh max-w-[900px] flex-col">
+    <div className="mx-auto flex min-h-dvh w-full min-w-0 max-w-[900px] flex-col overflow-x-clip">
       <TestAppNoticeModal
         open={demoNoticeOpen}
         onConfirm={() => {
@@ -43,7 +43,7 @@ export function AppShell() {
           setDemoNoticeOpen(false)
         }}
       />
-      <header className="sticky top-0 z-20 border-2 border-t-0 border-primary bg-graphite-750 px-3 pb-3 pt-3 shadow-[0_8px_24px_rgba(0,0,0,0.35)] sm:rounded-b-3xl">
+      <header className="sticky top-0 z-20 min-w-0 border-2 border-t-0 border-primary bg-graphite-750 px-3 pb-3 pt-3 shadow-[0_8px_24px_rgba(0,0,0,0.35)] sm:rounded-b-3xl">
         <div
           className={`mb-2 grid min-h-[3.75rem] items-start gap-2 ${
             SKIP_AUTH ? 'grid-cols-1' : 'grid-cols-[1fr_auto_1fr]'
@@ -104,7 +104,7 @@ export function AppShell() {
         </nav>
       </header>
 
-      <main className="scheme-dark flex-1 px-3.5 pb-10 pt-3.5 md:px-6 md:pt-5">
+      <main className="scheme-dark min-w-0 flex-1 overflow-x-clip px-3 pb-10 pt-3 sm:px-6 sm:pt-5">
         {tab === 'reg' && <RegulaminyTab />}
         {tab === 'pickup' && <OdbiorSprzetuTab />}
         {tab === 'docs' && isAdmin && <DokumentyTab />}

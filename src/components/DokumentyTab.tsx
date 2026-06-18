@@ -58,7 +58,7 @@ function DetailRow({
   return (
     <>
       <dt className={detailLabel}>{title}</dt>
-      <dd className="m-0 text-sm text-white/95">{children}</dd>
+      <dd className="m-0 break-words text-sm text-white/95">{children}</dd>
     </>
   )
 }
@@ -89,12 +89,12 @@ function DocumentCard({ document: d }: { document: SignedDocument }) {
           {formatSignedAt(d.signedAt)}
         </time>
 
-        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-end gap-x-3 gap-y-1 sm:gap-x-4">
+        <div className="grid min-w-0 grid-cols-2 gap-3 gap-y-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] sm:items-end sm:gap-x-4">
           <SummaryField title="Wynajmujący">
             {formatFullName(d.firstName, d.lastName)}
           </SummaryField>
           <SummaryField title="Przedmiot wynajmu">{d.equipmentLabel}</SummaryField>
-          <div className="flex shrink-0 items-center gap-1.5 self-end pb-0.5">
+          <div className="col-span-2 flex shrink-0 items-center justify-end gap-1.5 self-end pb-0.5 sm:col-span-1 sm:col-start-3 sm:row-start-1">
             <span
               className={`text-[11px] font-medium uppercase tracking-wide text-primary/80 transition-opacity duration-200 ${
                 expanded ? 'opacity-100' : 'opacity-80'
@@ -130,7 +130,7 @@ function DocumentCard({ document: d }: { document: SignedDocument }) {
             }`}
             inert={expanded ? undefined : true}
           >
-          <dl className="m-0 grid grid-cols-[minmax(0,38%)_1fr] gap-x-4 gap-y-2 text-sm">
+          <dl className="m-0 grid min-w-0 grid-cols-1 gap-x-4 gap-y-2 text-sm sm:grid-cols-[minmax(0,38%)_1fr]">
             <DetailRow title="Wynajmujący">
               {formatFullName(d.firstName, d.lastName)}
             </DetailRow>
@@ -250,7 +250,7 @@ export function DokumentyTab() {
   }
 
   return (
-    <ul className="flex list-none flex-col gap-4 p-0">
+    <ul className="flex min-w-0 list-none flex-col gap-4 p-0">
       {sortedDocuments.map((d) => (
         <DocumentCard key={d.id} document={d} />
       ))}

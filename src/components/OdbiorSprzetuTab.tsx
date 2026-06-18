@@ -43,8 +43,8 @@ export function OdbiorSprzetuTab() {
         }
 
         return (
-          <li key={d.id} className="glass-card flex flex-col gap-4 rounded-2xl p-4 sm:p-5">
-            <dl className="m-0 grid grid-cols-[minmax(0,38%)_1fr] gap-x-3 gap-y-1.5 text-sm">
+          <li key={d.id} className="glass-card flex min-w-0 flex-col gap-4 rounded-2xl p-4 sm:p-5">
+            <dl className="m-0 grid min-w-0 grid-cols-1 gap-x-3 gap-y-1.5 text-sm sm:grid-cols-[minmax(0,38%)_1fr]">
               <dt className={field}>Imię i nazwisko</dt>
               <dd className={`m-0 ${value}`}>
                 {formatFullName(d.firstName, d.lastName)}

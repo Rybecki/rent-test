@@ -65,7 +65,7 @@ export function FilledRegulationView({
     splitFilledRegulationForDisplay(filledText, equipmentId)
 
   return (
-    <div className="glass-card rounded-xl border border-primary/30">
+    <div className="glass-card min-w-0 overflow-x-clip rounded-xl border border-primary/30">
       <h3 className="border-b border-white/10 px-4 py-3 font-display text-base font-semibold text-primary">
         Podgląd regulaminu
       </h3>

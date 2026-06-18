@@ -36,6 +36,7 @@ import {
 import { EquipmentCounter } from './EquipmentCounter'
 import { PaymentMethodPicker } from './PaymentMethodPicker'
 import { ServiceChecklistCard } from './ServiceChecklistCard'
+import { OrangeSwitch } from './OrangeSwitch'
 import {
   getServiceChecklist,
   hasServiceChecklist,
@@ -46,10 +47,10 @@ const label =
   'font-sophisticated text-xs font-semibold uppercase tracking-wide text-primary'
 
 const control =
-  'w-full rounded-xl border border-white/15 bg-white/10 px-3.5 py-2.5 text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-40'
+  'w-full min-w-0 max-w-full rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-base text-white placeholder:text-white/35 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-40 sm:px-3.5'
 
 const dateControl =
-  'w-auto shrink-0 rounded-xl border border-white/15 bg-white/10 px-3.5 py-2.5 text-white focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-40'
+  'w-full min-w-0 max-w-full rounded-xl border border-white/15 bg-white/10 px-2 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-40 sm:px-3.5 sm:text-base'
 
 const selectChevron =
   'appearance-none bg-size-[10px_10px] bg-position-[calc(100%-14px)_50%] bg-no-repeat pr-10'
@@ -132,7 +133,7 @@ function MissingFieldWrap({
     <div
       ref={ref}
       id={id}
-      className={`rounded-xl p-1 ${active ? 'missing-field-active' : ''} ${className}`.trim()}
+      className={`min-w-0 max-w-full rounded-xl p-1 ${active ? 'missing-field-active' : ''} ${className}`.trim()}
     >
       {children}
     </div>
@@ -541,7 +542,7 @@ export function RegulaminyTab() {
     if (!previewData) return null
 
     return (
-      <div className="flex flex-col gap-4">
+      <div className="flex min-w-0 w-full max-w-full flex-col gap-4 overflow-x-clip">
         <FilledRegulationView
           filledText={filledPreviewText}
           equipmentId={equipmentId}
@@ -573,7 +574,7 @@ export function RegulaminyTab() {
   }
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex min-w-0 w-full max-w-full flex-col gap-4 overflow-x-clip">
       <MissingFieldWrap
         id="field-equipment"
         active={isMissing('equipment')}
@@ -621,15 +622,14 @@ export function RegulaminyTab() {
         active={isMissing('accepted')}
         hintTick={hintTick}
       >
-        <label className="flex cursor-pointer gap-2.5 text-sm text-white/85">
-          <input
-            type="checkbox"
-            className="mt-0.5 size-4 shrink-0 rounded border-white/30 bg-white/10 text-primary focus:ring-primary"
+        <div className="flex min-w-0 gap-3">
+          <OrangeSwitch
             checked={accepted}
-            onChange={(e) => setAccepted(e.target.checked)}
+            onChange={setAccepted}
             disabled={!equipmentId}
+            aria-label="Potwierdzenie zapoznania się z regulaminem"
           />
-          <span className="leading-relaxed">
+          <span className="min-w-0 flex-1 leading-relaxed text-sm text-white/85">
             Potwierdzam zapoznanie się z treścią{' '}
             <button
               type="button"
@@ -645,7 +645,7 @@ export function RegulaminyTab() {
             </button>{' '}
             oraz akceptuję go w całości.
           </span>
-        </label>
+        </div>
       </MissingFieldWrap>
 
       {equipmentId === 'e-bike' && (
@@ -659,24 +659,32 @@ export function RegulaminyTab() {
               Model roweru <span className="normal-case">(można wybrać oba)</span>
             </legend>
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-              {BIKE_MODEL_OPTIONS.map((opt) => (
-                <label
-                  key={opt.id}
-                  className={`flex cursor-pointer items-center gap-2 rounded-xl border px-3 py-3 transition ${
-                    bikeModels.includes(opt.id)
-                      ? 'border-primary bg-primary/15 text-primary'
-                      : 'border-white/15 bg-white/10 text-white/90 hover:border-white/25'
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    className="size-4 accent-primary"
-                    checked={bikeModels.includes(opt.id)}
-                    onChange={() => toggleBikeModel(opt.id)}
-                  />
-                  <span className="text-sm font-medium leading-snug">{opt.label}</span>
-                </label>
-              ))}
+              {BIKE_MODEL_OPTIONS.map((opt) => {
+                const selected = bikeModels.includes(opt.id)
+                return (
+                  <div
+                    key={opt.id}
+                    className={`flex items-center justify-between gap-3 rounded-xl border px-3 py-3 transition ${
+                      selected
+                        ? 'border-primary bg-primary/15'
+                        : 'border-white/15 bg-white/10 hover:border-white/25'
+                    }`}
+                  >
+                    <span
+                      className={`min-w-0 flex-1 text-sm font-medium leading-snug ${
+                        selected ? 'text-primary' : 'text-white/90'
+                      }`}
+                    >
+                      {opt.label}
+                    </span>
+                    <OrangeSwitch
+                      checked={selected}
+                      onChange={() => toggleBikeModel(opt.id)}
+                      aria-label={`Model roweru: ${opt.label}`}
+                    />
+                  </div>
+                )
+              })}
             </div>
             {bikeModels.length > 0 && (
               <div className="mt-3 flex flex-col gap-5">
@@ -733,7 +741,7 @@ export function RegulaminyTab() {
         </select>
       </MissingFieldWrap>
 
-      <div className="flex w-full flex-col items-center gap-4">
+      <div className="flex w-full min-w-0 flex-col items-stretch gap-4">
         {equipmentId && equipmentId !== 'e-bike' && (
           <div className="flex w-full flex-col items-center gap-2">
             <span className={`${label} text-center`}>
@@ -759,54 +767,44 @@ export function RegulaminyTab() {
           id="field-dates"
           active={isMissing('dates')}
           hintTick={hintTick}
-          className="w-full"
+          className="w-full min-w-0"
         >
-          <fieldset className="m-0 w-full border-0 p-0">
-            <legend className="sr-only">Termin</legend>
-            <div className="flex justify-center">
-              <div className="flex flex-col items-center gap-2">
-                <span className={label}>Termin</span>
-                <div className="relative flex flex-nowrap items-center gap-2">
-                  <input
-                    id="df"
-                    type="date"
-                    aria-label="Data od"
-                    className={dateControl}
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                  />
-                  <span className="shrink-0 text-white/45" aria-hidden>
-                    —
-                  </span>
-                  <input
-                    id="dt"
-                    type="date"
-                    aria-label="Data do"
-                    className={dateControl}
-                    value={dateTo}
-                    onChange={(e) => setDateTo(e.target.value)}
-                  />
-                  <span
-                    className="pointer-events-none absolute top-1/2 left-full ml-3 -translate-y-1/2 whitespace-nowrap font-display font-semibold leading-none text-primary"
-                    aria-live="polite"
-                  >
-                    <span className="invisible block select-none" aria-hidden>
-                      99 dni
-                    </span>
-                    <span className="absolute inset-0 flex items-center justify-start">
-                      {days > 0
-                        ? `${days} ${days === 1 ? 'dzień' : 'dni'}`
-                        : null}
-                    </span>
-                  </span>
-                </div>
-              </div>
+          <fieldset className="m-0 w-full min-w-0 border-0 p-0">
+            <legend className={`${label} mb-2 block text-center`}>Termin</legend>
+            <div className="grid w-full min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1.5 sm:gap-2">
+              <input
+                id="df"
+                type="date"
+                aria-label="Data od"
+                className={dateControl}
+                value={dateFrom}
+                onChange={(e) => setDateFrom(e.target.value)}
+              />
+              <span className="shrink-0 px-0.5 text-center text-sm text-white/45" aria-hidden>
+                —
+              </span>
+              <input
+                id="dt"
+                type="date"
+                aria-label="Data do"
+                className={dateControl}
+                value={dateTo}
+                onChange={(e) => setDateTo(e.target.value)}
+              />
             </div>
+            {days > 0 && (
+              <p
+                className="mt-2 text-center font-display text-sm font-semibold text-primary sm:text-base"
+                aria-live="polite"
+              >
+                {days} {days === 1 ? 'dzień' : 'dni'}
+              </p>
+            )}
           </fieldset>
         </MissingFieldWrap>
       </div>
 
-      <div className="glass-card flex flex-col gap-3 rounded-xl px-4 py-3">
+      <div className="glass-card flex min-w-0 flex-col gap-3 rounded-xl px-3 py-3 sm:px-4">
         {packagePrice > 0 && (
           <div className="flex items-center justify-between gap-4">
             <span className="font-sophisticated text-sm font-semibold text-white/75">
@@ -866,14 +864,13 @@ export function RegulaminyTab() {
         hintTick={hintTick}
         className="flex flex-col gap-4"
       >
-        <label className="flex cursor-pointer items-center gap-3 text-base font-semibold text-white/95">
-          <input
-            type="checkbox"
-            className="size-4 shrink-0 cursor-pointer rounded border border-primary bg-primary/25 text-primary accent-primary focus:ring-2 focus:ring-primary focus:ring-offset-0"
+        <div className="flex min-w-0 items-center gap-3">
+          <OrangeSwitch
+            id="wants-invoice-switch"
             checked={wantsInvoice}
-            onChange={(e) => {
-              setWantsInvoice(e.target.checked)
-              if (!e.target.checked) {
+            onChange={(checked) => {
+              setWantsInvoice(checked)
+              if (!checked) {
                 setInvoiceCompanyName('')
                 setInvoiceNip('')
                 setInvoiceCity('')
@@ -884,12 +881,15 @@ export function RegulaminyTab() {
               }
             }}
             disabled={!equipmentId}
+            aria-label="Chcę otrzymać fakturę"
           />
-          Chcę otrzymać fakturę
-        </label>
+          <span className="text-base font-semibold text-white/95">
+            Chcę otrzymać fakturę
+          </span>
+        </div>
 
         {wantsInvoice && (
-          <div className="flex flex-col gap-3 rounded-xl border border-primary/25 bg-white/5 p-4">
+          <div className="flex min-w-0 flex-col gap-3 rounded-xl border border-primary/25 bg-white/5 p-3 sm:p-4">
             <div className="flex flex-col gap-1.5">
               <label className={label} htmlFor="invoiceCompanyName">
                 Nazwa firmy

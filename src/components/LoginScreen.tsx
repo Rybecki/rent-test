@@ -8,7 +8,7 @@ type LoginScreenProps = {
 }
 
 const control =
-  'w-full rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-white placeholder:text-white/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
+  'w-full min-w-0 max-w-full rounded-xl border border-white/15 bg-white/10 px-3 py-2.5 text-base text-white placeholder:text-white/40 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary'
 
 export function LoginScreen({ login }: LoginScreenProps) {
   const [email, setEmail] = useState('')
@@ -34,7 +34,7 @@ export function LoginScreen({ login }: LoginScreenProps) {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center gap-8 p-4">
+    <div className="flex min-h-dvh min-w-0 flex-col items-center justify-center gap-8 overflow-x-clip p-4">
       <img
         src={LOGO_SRC}
         alt={APP_NAME}
@@ -42,7 +42,7 @@ export function LoginScreen({ login }: LoginScreenProps) {
       />
       <form
         onSubmit={handleSubmit}
-        className="glass-card w-full max-w-md rounded-2xl p-6 shadow-2xl sm:p-8"
+        className="glass-card w-full min-w-0 max-w-md rounded-2xl p-5 shadow-2xl sm:p-8"
       >
         <p className="mb-5 text-center text-sm text-white/70">
           Zaloguj się, aby kontynuować
