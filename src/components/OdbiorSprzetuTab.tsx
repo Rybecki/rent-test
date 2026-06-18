@@ -3,6 +3,7 @@ import { useMemo } from 'react'
 import { ChecklistCard } from './ChecklistCard'
 import { useDocuments } from '../context/documentsContext'
 import { getReturnChecklist, hasReturnChecklist } from '../data/returnChecklists'
+import { formatFullName } from '../lib/personName'
 
 const field =
   'font-sophisticated text-xs font-semibold uppercase tracking-wide text-primary'
@@ -22,7 +23,7 @@ export function OdbiorSprzetuTab() {
         <PackageCheck size={40} strokeWidth={1.25} aria-hidden className="text-primary/80" />
         <p className="max-w-md text-sm leading-relaxed">
           Brak dokumentów do odbioru. Podpisz regulamin dla E-Bike lub Kajaków w zakładce
-          „Regulaminy”.
+          „Strona główna”.
         </p>
       </div>
     )
@@ -45,7 +46,13 @@ export function OdbiorSprzetuTab() {
           <li key={d.id} className="glass-card flex flex-col gap-4 rounded-2xl p-4 sm:p-5">
             <dl className="m-0 grid grid-cols-[minmax(0,38%)_1fr] gap-x-3 gap-y-1.5 text-sm">
               <dt className={field}>Imię i nazwisko</dt>
-              <dd className={`m-0 ${value}`}>{d.fullName}</dd>
+              <dd className={`m-0 ${value}`}>
+                {formatFullName(d.firstName, d.lastName)}
+              </dd>
+              <dt className={field}>Wydający sprzęt</dt>
+              <dd className={`m-0 ${value}`}>
+                {formatFullName(d.issuerFirstName, d.issuerLastName) || '—'}
+              </dd>
               <dt className={field}>Sprzęt</dt>
               <dd className={`m-0 ${value}`}>{d.equipmentLabel}</dd>
               <dt className={field}>Liczba</dt>

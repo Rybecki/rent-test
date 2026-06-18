@@ -44,10 +44,4 @@ export const EQUIPMENT_LABELS: Record<EquipmentId, string> = {
   dmuchance: 'Dmuchańce',
 }
 
-export const EQUIPMENT_ORDER: EquipmentId[] = [
-  'e-bike',
-  'kajaki',
-  'vip-bus',
-  'autolaweta',
-  'dmuchance',
-]
+export const EQUIPMENT_ORDER: EquipmentId[] = ['e-bike', 'kajaki']

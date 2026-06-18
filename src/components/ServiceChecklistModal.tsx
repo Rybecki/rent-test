@@ -126,7 +126,7 @@ export function ServiceChecklistModal({
                                 >
                                   <input
                                     type="checkbox"
-                                    className="mt-0.5 size-4 shrink-0 accent-[#f7c73b]"
+                                    className="mt-0.5 size-4 shrink-0 accent-primary"
                                     checked={on}
                                     onChange={() => onToggle(item.id)}
                                   />

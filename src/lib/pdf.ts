@@ -5,6 +5,8 @@ import {
   getIssueChecklistStatus,
   getReturnChecklistStatus,
 } from './documentChecklistStatus'
+import { formatBikeCountsSummary, normalizeBikeModelCounts } from '../data/bikeModels'
+import { formatFullName } from './personName'
 import type { SignedDocument } from '../types'
 import { PAYMENT_METHOD_LABELS } from '../types'
 
@@ -59,8 +61,8 @@ function sanitizeFileNamePart(value: string): string {
 
 export function buildPdfFileName(doc: SignedDocument): string {
   const parts = [
-    'Rent A Bo Co',
-    sanitizeFileNamePart(doc.fullName),
+    APP_NAME,
+    sanitizeFileNamePart(formatFullName(doc.firstName, doc.lastName)),
     sanitizeFileNamePart(doc.equipmentLabel),
   ].filter((p) => p.length > 0)
   return `${parts.join(' - ')}.pdf`
@@ -80,20 +82,35 @@ export async function buildSignedPdf(doc: SignedDocument): Promise<void> {
 
   const header = [
     `${APP_NAME} — dokument podpisany`,
-    `Imię i nazwisko: ${doc.fullName}`,
+    `Imię i nazwisko: ${formatFullName(doc.firstName, doc.lastName)}`,
     `Adres: ${doc.residentialAddress}`,
     `Telefon: ${doc.phone}`,
+    `E-mail: ${doc.clientEmail}`,
     `Dokument tożsamości: ${doc.idDocument}`,
+    ...(doc.pesel ? [`PESEL: ${doc.pesel}`] : []),
     `Przedmiot: ${doc.equipmentLabel}`,
     `Pakiet: ${doc.packageName}`,
     `Termin: ${doc.dateFrom} — ${doc.dateTo} (${doc.days} dni)`,
-    `Liczba sprzętu: ${doc.equipmentCount}`,
+    ...(doc.equipmentId === 'e-bike' && doc.bikeModels?.length
+      ? [
+          `Rowerów łącznie: ${doc.equipmentCount}`,
+          formatBikeCountsSummary(
+            doc.bikeModels,
+            normalizeBikeModelCounts(
+              doc.bikeModels,
+              doc.bikeModelCounts,
+              doc.equipmentCount,
+            ),
+          ),
+        ]
+      : [`Liczba sprzętu: ${doc.equipmentCount}`]),
     `Kwota: ${doc.pricePln.toFixed(2)} PLN`,
     `Płatność: ${PAYMENT_METHOD_LABELS[doc.paymentMethod]}`,
     ...(doc.depositPln > 0
       ? [`Kaucja zwrotna: ${doc.depositPln.toFixed(0)} PLN`]
       : []),
     `Data podpisania: ${new Date(doc.signedAt).toLocaleString('pl-PL')}`,
+    `Osoba wydająca sprzęt: ${formatFullName(doc.issuerFirstName, doc.issuerLastName)}`,
     ...((): string[] => {
       const lines: string[] = []
       const issue = getIssueChecklistStatus(doc)
@@ -125,16 +142,20 @@ export async function buildSignedPdf(doc: SignedDocument): Promise<void> {
     doc.filledRegulationText ||
     buildFilledRegulation({
       equipmentId: doc.equipmentId,
-      fullName: doc.fullName,
+      firstName: doc.firstName,
+      lastName: doc.lastName,
       residentialAddress: doc.residentialAddress,
       phone: doc.phone,
+      clientEmail: doc.clientEmail ?? '',
       idDocument: doc.idDocument,
+      pesel: doc.pesel ?? '',
       packageName: doc.packageName,
       dateFrom: doc.dateFrom,
       dateTo: doc.dateTo,
       days: doc.days,
       pricePln: doc.pricePln,
       bikeModels: doc.bikeModels ?? (doc.bikeModel ? [doc.bikeModel] : undefined),
+      bikeModelCounts: doc.bikeModelCounts,
       equipmentCount: doc.equipmentCount,
       paymentMethod: doc.paymentMethod,
       depositPln: doc.depositPln,

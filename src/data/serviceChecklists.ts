@@ -21,12 +21,7 @@ export const E_BIKE_CHECKLIST: ChecklistDef = {
             {
               id: 'eb-k1-1-2',
               label:
-                'Pobierz kaucję (gotówka lub terminal) i odnotuj to w umowie.',
-            },
-            {
-              id: 'eb-k1-1-3',
-              label:
-                'Podpisz umowę z klientem i daj mu kopię (lub regulamin).',
+                'Pobierz kaucję, podpisz umowę i przekaż klientowi regulamin.',
             },
           ],
         },
@@ -41,16 +36,7 @@ export const E_BIKE_CHECKLIST: ChecklistDef = {
             {
               id: 'eb-k1-2-2',
               label:
-                'Opony: Sprawdź ciśnienie (rower elektryczny musi mieć twarde opony).',
-            },
-            {
-              id: 'eb-k1-2-3',
-              label:
-                'Hamulce: Zaciśnij klamki, upewnij się, że rower staje w miejscu.',
-            },
-            {
-              id: 'eb-k1-2-4',
-              label: 'Napęd: Sprawdź, czy łańcuch jest czysty i nasmarowany.',
+                'Hamulce i opony: Sprawdź działanie hamulców oraz ciśnienie w oponach.',
             },
           ],
         },
@@ -63,19 +49,9 @@ export const E_BIKE_CHECKLIST: ChecklistDef = {
                 'Obsługa kontrolera: Pokaż jak włączyć/wyłączyć system i jak zmieniać tryby wspomagania.',
             },
             {
-              id: 'eb-k1-3-2',
-              label:
-                'Biegi: Przypomnij, żeby zmieniać biegi podczas pedałowania (nie na postoju!).',
-            },
-            {
               id: 'eb-k1-3-3',
               label:
                 'Zabezpieczenie: Pokaż jak prawidłowo przypiąć rower zapięciem (zawsze o ramę!).',
-            },
-            {
-              id: 'eb-k1-3-4',
-              label:
-                'Waga: Ostrzeż, że e-bike jest cięższy od zwykłego roweru przy manewrowaniu.',
             },
           ],
         },
@@ -89,12 +65,6 @@ export const E_BIKE_CHECKLIST: ChecklistDef = {
             {
               id: 'eb-k1-4-2',
               label: 'Wydaj zapięcie i kluczyk do baterii/zapięcia.',
-            },
-            {
-              id: 'eb-k1-4-3',
-              label:
-                '(Opcjonalnie) Przekaż ładowarkę, jeśli wynajem jest na więcej niż 1 dobę.',
-              optional: true,
             },
           ],
         },
@@ -115,16 +85,12 @@ export const KAJAKI_CHECKLIST: ChecklistDef = {
             {
               id: 'kj-1-1',
               label:
-                'Sprawdzenie tożsamości Klienta (dowód osobisty/paszport).',
+                'Sprawdzenie tożsamości klienta (dowód osobisty/paszport).',
             },
             {
               id: 'kj-1-2',
-              label: 'Weryfikacja podpisania Umowy Najmu i Regulaminu.',
-            },
-            {
-              id: 'kj-1-3',
               label:
-                'Pobranie kaucji i odnotowanie formy płatności (gotówka/blokada na karcie).',
+                'Podpisanie umowy, regulaminu oraz pobranie kaucji.',
             },
           ],
         },
@@ -135,10 +101,6 @@ export const KAJAKI_CHECKLIST: ChecklistDef = {
             {
               id: 'kj-2-2',
               label: 'Kontrola kadłuba (brak nowych, głębokich pęknięć).',
-            },
-            {
-              id: 'kj-2-3',
-              label: 'Montaż trzeciego siedziska dla dziecka (jeśli zamówiono).',
             },
           ],
         },
@@ -170,7 +132,6 @@ export const KAJAKI_CHECKLIST: ChecklistDef = {
               label:
                 'Krótkie przeszkolenie: jak nie uszkodzić polietylenu (np. nie przeciągać po asfalcie/betonie).',
             },
-            { id: 'kj-4-3', label: 'Przekazanie kontaktu alarmowego do wypożyczalni.' },
           ],
         },
         {

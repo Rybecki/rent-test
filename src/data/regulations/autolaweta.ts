@@ -1,15 +1,15 @@
 export const REGULATION_AUTOLAWETA = `Regulamin i umowa usługi autolaweta
 
 REGULAMIN USŁUGI AUTO-LAWETA
-1. Usługa transportu realizowana jest przez A Bo Co... Sp. z o.o.
-2. Każde zlecenie wyceniane jest indywidualnie na podstawie trasy, czasu i rodzaju ładunku.
-3. Zleceniodawca odpowiada za poprawne informacje o ładunku, wymiarach i wadze.
-4. Załadunek i rozładunek realizowane są zgodnie z zasadami bezpieczeństwa.
-5. Szczegółowe warunki określa zlecenie transportowe i umowa.
+1. Transport realizowany jest przez Rentally z siedzibą w Poznaniu.
+2. Każde zlecenie wyceniane jest indywidualnie, z uwzględnieniem czasu, trasy i rodzaju ładunku.
+3. Zleceniodawca odpowiada za rzetelne podanie informacji o ładunku, jego gabarytach i wadze.
+4. Załadunek i rozładunek wykonywane są z zachowaniem zasad bezpieczeństwa.
+5. Szczegółowe warunki określa zlecenie transportowe oraz umowa.
 
 UMOWA TRANSPORTU AUTO-LAWETA nr ____/202X
-Data i miejsce zawarcia umowy: ________________________________________
-Wynajmujący: A Bo Co... sp. z o.o., ul. Niwna 9, 40-406 Katowice
+Data zawarcia umowy: ________________________________________
+Wynajmujący: Rentally z siedzibą w Poznaniu
 Zleceniodawca: ________________________________________________________
 Ładunek: ______________________________________________________________
 Trasa: ________________________________________________________________

@@ -2,119 +2,100 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from 'react'
-import { computeDepositPln } from '../data/equipmentMeta'
 import { isChecklistComplete } from '../data/checklistUtils'
 import { getReturnChecklist } from '../data/returnChecklists'
-import { buildFilledRegulation } from '../lib/fillRegulation'
-import type { BikeModel, PaymentMethod, SignedDocument } from '../types'
+import { documentsApi } from '../lib/api'
+import type { SignedDocument } from '../types'
+import { useAuth } from './AuthProvider'
 import { DocumentsContext } from './documentsContext'
 
-const STORAGE_KEY = 'cherrysign-documents-v1'
-
-function normalizeBikeModels(raw: SignedDocument): BikeModel[] {
-  if (raw.bikeModels?.length) return raw.bikeModels
-  if (raw.bikeModel) return [raw.bikeModel]
-  return []
-}
-
-function migrateDoc(raw: SignedDocument): SignedDocument {
-  const equipmentCount = raw.equipmentCount ?? 1
-  const paymentMethod = (raw.paymentMethod ?? 'cash') as PaymentMethod
-  const depositPln =
-    raw.depositPln ??
-    computeDepositPln(raw.equipmentId, equipmentCount)
-  const bikeModels = normalizeBikeModels(raw)
-
-  const formBase = {
-    equipmentId: raw.equipmentId,
-    fullName: raw.fullName,
-    residentialAddress: raw.residentialAddress ?? '',
-    phone: raw.phone ?? '',
-    idDocument: raw.idDocument ?? '',
-    packageName: raw.packageName,
-    dateFrom: raw.dateFrom,
-    dateTo: raw.dateTo,
-    days: raw.days,
-    pricePln: raw.pricePln,
-    bikeModels: bikeModels.length > 0 ? bikeModels : undefined,
-    equipmentCount,
-    paymentMethod,
-    depositPln,
-  }
-
-  return {
-    ...raw,
-    equipmentCount,
-    paymentMethod,
-    depositPln,
-    bikeModels: bikeModels.length > 0 ? bikeModels : undefined,
-    filledRegulationText:
-      raw.filledRegulationText || buildFilledRegulation(formBase),
-  }
-}
-
-function load(): SignedDocument[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw) as SignedDocument[]
-    if (!Array.isArray(parsed)) return []
-    return parsed.map(migrateDoc)
-  } catch {
-    return []
-  }
-}
-
-function save(list: SignedDocument[]) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list))
-  } catch {
-    return
-  }
-}
+type RefreshOptions = { silent?: boolean }
 
 export function DocumentsProvider({ children }: { children: ReactNode }) {
-  const [documents, setDocuments] = useState<SignedDocument[]>(load)
+  const { user } = useAuth()
+  const userKey = user?.email ?? ''
+  const [documents, setDocuments] = useState<SignedDocument[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const hasLoadedOnce = useRef(false)
 
-  useEffect(() => {
-    save(documents)
-  }, [documents])
-
-  const addDocument = useCallback(
-    (partial: Omit<SignedDocument, 'id' | 'signedAt'>): SignedDocument => {
-      const doc: SignedDocument = {
-        ...partial,
-        id: crypto.randomUUID(),
-        signedAt: new Date().toISOString(),
+  const refresh = useCallback(
+    async (options?: RefreshOptions) => {
+      if (!userKey) {
+        setDocuments([])
+        setLoading(false)
+        hasLoadedOnce.current = false
+        return
       }
-      setDocuments((prev) => [doc, ...prev])
-      return doc
+
+      const silent = options?.silent ?? hasLoadedOnce.current
+      if (!silent) setLoading(true)
+      setError(null)
+
+      try {
+        const list = await documentsApi.list()
+        setDocuments(Array.isArray(list) ? list : [])
+      } catch (e) {
+        setDocuments([])
+        setError(e instanceof Error ? e.message : 'Błąd ładowania dokumentów')
+      } finally {
+        hasLoadedOnce.current = true
+        setLoading(false)
+      }
     },
-    [],
+    [userKey],
   )
 
-  const updateReturnChecklist = useCallback((docId: string, checkedIds: string[]) => {
-    setDocuments((prev) =>
-      prev.map((d) => {
-        if (d.id !== docId) return d
-        const def = getReturnChecklist(d.equipmentId)
-        const checkedSet = new Set(checkedIds)
-        const completed = def ? isChecklistComplete(def, checkedSet) : false
-        return {
-          ...d,
-          returnChecklistCheckedIds: checkedIds,
-          returnChecklistCompleted: completed,
-        }
-      }),
-    )
-  }, [])
+  useEffect(() => {
+    hasLoadedOnce.current = false
+    void refresh()
+  }, [refresh])
+
+  const addDocument = useCallback(
+    async (
+      partial: Omit<SignedDocument, 'id' | 'signedAt'>,
+    ): Promise<SignedDocument> => {
+      const res = await documentsApi.create(partial)
+      const { emailStatus, ...doc } = res
+      await refresh({ silent: true })
+      return Object.assign(doc, { emailStatus })
+    },
+    [refresh],
+  )
+
+  const updateReturnChecklist = useCallback(
+    async (docId: string, checkedIds: string[]) => {
+      const doc = documents.find((d) => d.id === docId)
+      if (!doc) return
+      const def = getReturnChecklist(doc.equipmentId)
+      const checkedSet = new Set(checkedIds)
+      const completed = def ? isChecklistComplete(def, checkedSet) : false
+      const updated = await documentsApi.updateReturnChecklist(
+        docId,
+        checkedIds,
+        completed,
+      )
+      setDocuments((prev) =>
+        prev.map((d) => (d.id === docId ? updated : d)),
+      )
+    },
+    [documents],
+  )
 
   const value = useMemo(
-    () => ({ documents, addDocument, updateReturnChecklist }),
-    [documents, addDocument, updateReturnChecklist],
+    () => ({
+      documents,
+      loading,
+      error,
+      refresh,
+      addDocument,
+      updateReturnChecklist,
+    }),
+    [documents, loading, error, refresh, addDocument, updateReturnChecklist],
   )
 
   return (

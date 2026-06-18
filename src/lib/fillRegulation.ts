@@ -1,19 +1,29 @@
+import {
+  BIKE_MODEL_LABELS,
+  normalizeBikeModelCounts,
+  sumBikeModelCounts,
+} from '../data/bikeModels'
+import { formatFullName } from './personName'
 import type { BikeModel, EquipmentId, PaymentMethod } from '../types'
 import { PAYMENT_METHOD_LABELS } from '../types'
 import { getRegulationText } from '../data/regulations'
 
 export interface RegulationFormData {
   equipmentId: EquipmentId
-  fullName: string
+  firstName: string
+  lastName: string
   residentialAddress: string
   phone: string
+  clientEmail?: string
   idDocument: string
+  pesel: string
   packageName: string
   dateFrom: string
   dateTo: string
   days: number
   pricePln: number
   bikeModels?: BikeModel[]
+  bikeModelCounts?: Partial<Record<BikeModel, number>>
   equipmentCount: number
   paymentMethod: PaymentMethod
   depositPln: number
@@ -50,10 +60,11 @@ export function fillRegulationText(
   data: RegulationFormData,
 ): string {
   let t = raw
-  const name = data.fullName.trim()
+  const name = formatFullName(data.firstName, data.lastName)
   const address = data.residentialAddress.trim()
   const phone = data.phone.trim()
   const idDoc = data.idDocument.trim()
+  const pesel = data.pesel.trim().replace(/\D/g, '')
   const from = formatDatePl(data.dateFrom)
   const to = formatDatePl(data.dateTo)
   const price = data.pricePln.toFixed(2)
@@ -68,11 +79,11 @@ export function fillRegulationText(
 
   t = t.replace(
     /Nr dokumentu tożsamości \(lub PESEL\):\s*_{3,}/gi,
-    `Nr dokumentu tożsamości (lub PESEL): ${idDoc}`,
+    `Nr dokumentu tożsamości: ${idDoc}, PESEL: ${pesel}`,
   )
   t = t.replace(
     /Nr dokumentu tożsamości \(PESEL\/Paszport\):\s*_{3,}/gi,
-    `Nr dokumentu tożsamości (lub PESEL): ${idDoc}`,
+    `Nr dokumentu tożsamości: ${idDoc}, PESEL: ${pesel}`,
   )
   t = t.replace(/Adres zamieszkania:\s*_{3,}/gi, `Adres zamieszkania: ${address}`)
   t = t.replace(/Numer telefonu:\s*_{3,}/gi, `Numer telefonu: ${phone}`)
@@ -84,7 +95,7 @@ export function fillRegulationText(
   )
   t = t.replace(
     /PESEL:\s*\.+\s*,\s*Nr tel:\s*\.+/,
-    `PESEL: ${idDoc}, Nr tel: ${phone}`,
+    `PESEL: ${pesel}, Nr tel: ${phone}`,
   )
   t = t.replace(
     /Adres:\s*\.+(?=,\s*zwanym)/,
@@ -92,7 +103,7 @@ export function fillRegulationText(
   )
   t = t.replace(
     /Najemca:\s*\.{20,}/,
-    `Najemca: ${name}, ${address}, tel. ${phone}, dok. tożs. ${idDoc}`,
+    `Najemca: ${name}, ${address}, tel. ${phone}, dok. tożs. ${idDoc}, PESEL: ${pesel}`,
   )
   t = t.replace(
     /Zleceniodawca:\s*_{3,}/,
@@ -108,8 +119,12 @@ export function fillRegulationText(
     `Planowana data i godzina zwrotu: ${to}`,
   )
   t = t.replace(
+    /Data zawarcia umowy:\s*_{3,}/,
+    `Data zawarcia umowy: ${from}`,
+  )
+  t = t.replace(
     /Data i miejsce zawarcia umowy:\s*_{3,}/,
-    `Data i miejsce zawarcia umowy: ${from}`,
+    `Data zawarcia umowy: ${from}`,
   )
   t = t.replace(
     /Zawarta w dniu \.+\s+pomiędzy:/,
@@ -144,7 +159,21 @@ export function fillRegulationText(
     `Cena: $1 PLN — płatność: ${PAYMENT_METHOD_LABELS[data.paymentMethod]}`,
   )
 
-  const count = Math.max(1, data.equipmentCount)
+  const bikeModels = data.bikeModels ?? []
+  const bikeCounts =
+    data.equipmentId === 'e-bike'
+      ? normalizeBikeModelCounts(
+          bikeModels,
+          data.bikeModelCounts,
+          data.equipmentCount,
+        )
+      : {}
+  const count = Math.max(
+    1,
+    data.equipmentId === 'e-bike'
+      ? sumBikeModelCounts(bikeCounts, bikeModels, data.equipmentCount)
+      : data.equipmentCount,
+  )
   const countStr = String(count)
   const deposit =
     data.depositPln > 0 ? data.depositPln.toFixed(0) : '0'
@@ -191,19 +220,16 @@ export function fillRegulationText(
     )
   }
 
-  const bikeModels = data.bikeModels ?? []
-  if (data.equipmentId === 'e-bike' && bikeModels.length > 0) {
+  if (data.equipmentId === 'e-bike') {
+    const krossN = bikeCounts.kross ?? 0
+    const winoraN = bikeCounts.winora ?? 0
     t = t.replace(
-      /\[\]\s*KROSS Influx Hybrid 1\.0/,
-      bikeModels.includes('kross')
-        ? '[X] KROSS Influx Hybrid 1.0'
-        : '[] KROSS Influx Hybrid 1.0',
+      /\[\]\s*KROSS Influx Hybrid 1\.0 \(Nr ramy: _+\)/,
+      `${krossN > 0 ? '[X]' : '[]'} ${BIKE_MODEL_LABELS.kross} (liczba: ${krossN}) (Nr ramy: ______________________)`,
     )
     t = t.replace(
-      /\[\]\s*WINORA Yucatan X8/,
-      bikeModels.includes('winora')
-        ? '[X] WINORA Yucatan X8'
-        : '[] WINORA Yucatan X8',
+      /\[\]\s*WINORA Yucatan X8 \(Nr ramy: _+\)/,
+      `${winoraN > 0 ? '[X]' : '[]'} ${BIKE_MODEL_LABELS.winora} (liczba: ${winoraN}) (Nr ramy: ______________________)`,
     )
   }
 
@@ -305,25 +331,32 @@ export function isBikeLine(line: string): boolean {
 export function isBikeLineSelected(
   line: string,
   bikeModels?: BikeModel[],
+  bikeModelCounts?: Partial<Record<BikeModel, number>>,
 ): boolean {
-  if (!bikeModels?.length) return false
-  if (
-    bikeModels.includes('kross') &&
-    /KROSS Influx/.test(line) &&
-    /\[X\]/.test(line)
-  )
-    return true
-  if (
-    bikeModels.includes('winora') &&
-    /WINORA Yucatan/.test(line) &&
-    /\[X\]/.test(line)
-  )
-    return true
+  if (/KROSS Influx/.test(line)) {
+    const n = bikeModelCounts?.kross
+    if (n != null) return n > 0
+    return Boolean(bikeModels?.includes('kross') && /\[X\]/.test(line))
+  }
+  if (/WINORA Yucatan/.test(line)) {
+    const n = bikeModelCounts?.winora
+    if (n != null) return n > 0
+    return Boolean(bikeModels?.includes('winora') && /\[X\]/.test(line))
+  }
   return false
 }
 
 export function buildHighlightSnippets(data: RegulationFormData): string[] {
-  const count = Math.max(1, data.equipmentCount)
+  const bikeModels = data.bikeModels ?? []
+  const bikeCounts = normalizeBikeModelCounts(
+    bikeModels,
+    data.bikeModelCounts,
+    data.equipmentCount,
+  )
+  const count =
+    data.equipmentId === 'e-bike'
+      ? sumBikeModelCounts(bikeCounts, bikeModels, data.equipmentCount)
+      : Math.max(1, data.equipmentCount)
   const price = data.pricePln.toFixed(2)
   const deposit =
     data.depositPln > 0 ? data.depositPln.toFixed(0) : ''
@@ -331,10 +364,13 @@ export function buildHighlightSnippets(data: RegulationFormData): string[] {
   const to = formatDatePl(data.dateTo)
 
   const raw = [
-    data.fullName.trim(),
+    formatFullName(data.firstName, data.lastName),
+    data.firstName.trim(),
+    data.lastName.trim(),
     data.residentialAddress.trim(),
     data.phone.trim(),
     data.idDocument.trim(),
+    data.pesel.trim().replace(/\D/g, ''),
     data.packageName.trim(),
     from,
     to,
@@ -349,7 +385,7 @@ export function buildHighlightSnippets(data: RegulationFormData): string[] {
     `Cena za wynajem wynosi: ${price} zł brutto`,
     `Cena netto: ${price} PLN`,
     `Cena: ${price} PLN`,
-    `${data.fullName.trim()}, ${data.residentialAddress.trim()}`,
+    `${formatFullName(data.firstName, data.lastName)}, ${data.residentialAddress.trim()}`,
   ]
 
   const seen = new Set<string>()
@@ -369,7 +405,7 @@ export function isFilledPreviewLine(
   if (!trimmed) return false
 
   if (isBikeLine(line)) {
-    return isBikeLineSelected(line, data.bikeModels)
+    return isBikeLineSelected(line, data.bikeModels, data.bikeModelCounts)
   }
 
   if (/\[X\]/.test(line)) {

@@ -65,11 +65,6 @@ export const KAJAKI_RETURN_CHECKLIST: ChecklistDef = {
           title: '5. Finalizacja:',
           items: [
             { id: 'kj-r-5-1', label: 'Podpisanie protokołu odbioru.' },
-            {
-              id: 'kj-r-5-2',
-              label:
-                'Zaproszenie klienta do wystawienia opinii i ponownego skorzystania z usług.',
-            },
           ],
         },
       ],
@@ -94,12 +89,7 @@ export const E_BIKE_RETURN_CHECKLIST: ChecklistDef = {
             {
               id: 'eb-r-1-2',
               label:
-                'Wyświetlacz i manetki: Sprawdź, czy ekran nie jest pęknięty, a przyciski działają.',
-            },
-            {
-              id: 'eb-r-1-3',
-              label:
-                'Koła: Zakręć kołem, czy nie ma „bicia” (czy felga jest prosta).',
+                'Wyświetlacz i koła: Sprawdź ekran, manetki oraz czy felgi są proste.',
             },
           ],
         },
@@ -121,11 +111,7 @@ export const E_BIKE_RETURN_CHECKLIST: ChecklistDef = {
         {
           title: '3. Kompletność zestawu:',
           items: [
-            { id: 'eb-r-3-1', label: 'Czy zwrócono kluczyki?' },
-            {
-              id: 'eb-r-3-2',
-              label: 'Czy zapięcie i kask są w dobrym stanie?',
-            },
+            { id: 'eb-r-3-1', label: 'Czy zwrócono kluczyki, zapięcie i kask?' },
             {
               id: 'eb-r-3-3',
               label: 'Czy zwrócono ładowarkę (jeśli była wydana)?',
@@ -146,7 +132,6 @@ export const E_BIKE_RETURN_CHECKLIST: ChecklistDef = {
               label:
                 'Jeśli wszystko jest OK – zwróć kaucję lub anuluj blokadę na karcie.',
             },
-            { id: 'eb-r-4-3', label: 'Podpisz protokół zwrotu.' },
           ],
         },
       ],
@@ -158,7 +143,7 @@ Zasada „Zdjęcie”: Jeśli zauważysz jakąś rysę przy wydawaniu, której n
 
 Uśmiech: Zapytaj klienta, jak mu się jeździło i czy trasa była ciekawa. Zadowolony klient wróci do „Złotego Jelenia” i poleci nas znajomym!
 
-Katowice vs Jura: Pamiętaj, aby przy transporcie rowerów między Niwną 9 a Złotym Jeleniem zawsze zdejmować baterie i panele (jeśli to możliwe), aby nie drgały niepotrzebnie na przyczepie.`,
+Katowice vs Jura: Pamiętaj, aby przy transporcie rowerów między bazą w Katowicach a Złotym Jeleniem zawsze zdejmować baterie i panele (jeśli to możliwe), aby nie drgały niepotrzebnie na przyczepie.`,
 }
 
 const RETURN_BY_EQUIPMENT: Partial<Record<EquipmentId, ChecklistDef>> = {

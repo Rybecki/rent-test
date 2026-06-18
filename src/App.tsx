@@ -1,27 +1,34 @@
-import { useCallback, useState } from 'react'
+import { AuthProvider, useAuth } from './context/AuthProvider'
 import { DocumentsProvider } from './context/DocumentsProvider'
 import { LoginScreen } from './components/LoginScreen'
 import { AppShell } from './components/AppShell'
 
-const SESSION = 'cherrysign-auth'
+function AppContent() {
+  const { user, loading, login } = useAuth()
 
-export default function App() {
-  const [authed, setAuthed] = useState(
-    () => typeof sessionStorage !== 'undefined' && sessionStorage.getItem(SESSION) === '1',
-  )
+  if (loading) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center text-sm text-white/60">
+        Ładowanie…
+      </div>
+    )
+  }
 
-  const onAuthenticated = useCallback(() => {
-    sessionStorage.setItem(SESSION, '1')
-    setAuthed(true)
-  }, [])
+  if (!user) {
+    return <LoginScreen login={login} />
+  }
 
   return (
     <DocumentsProvider>
-      {authed ? (
-        <AppShell />
-      ) : (
-        <LoginScreen onAuthenticated={onAuthenticated} />
-      )}
+      <AppShell />
     </DocumentsProvider>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   )
 }

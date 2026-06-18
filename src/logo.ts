@@ -1,1 +1,3 @@
-export const LOGO_SRC = '/logo.png'
+import { appUrl } from './lib/baseUrl'
+
+export const LOGO_SRC = appUrl('/logo.png')

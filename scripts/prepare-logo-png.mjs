@@ -3,10 +3,7 @@ import { dirname, join } from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
-const src = join(
-  process.env.USERPROFILE,
-  '.cursor/projects/d-WORKSPACE-Wypo-yczalnia-Ja-Yhymm/assets/c__Users_patry_AppData_Roaming_Cursor_User_workspaceStorage_31b678cbc34d58e58be5b6d561cf0938_images_RENT_A_BO_CO...-10b874ac-0472-4fee-884d-5cda1dfa6df2.png',
-)
+const src = join(__dirname, '..', 'assets', 'logo-source.png')
 const out = join(__dirname, '..', 'public', 'logo.png')
 
 const BLACK_MAX = 20
