@@ -1,4 +1,5 @@
--- Uruchom w phpMyAdmin (baza wooyek_rent-aboco) jeśli npm run db:migrate nie łączy się zdalnie.
+-- Uruchom w phpMyAdmin, jeśli npm run db:migrate nie łączy się zdalnie.
+-- Użytkowników aplikacji utwórz przez npm run db:migrate (MIGRATE_USERS w .env).
 
 CREATE TABLE IF NOT EXISTS users (
   id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -40,10 +41,3 @@ CREATE TABLE IF NOT EXISTS signed_documents (
   CONSTRAINT fk_signed_documents_user
     FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-INSERT INTO users (email, password_hash, role) VALUES
-  ('biuro@ja-yhymm.pl', '$2b$12$vzE2wJcVF2tK9Cd5B5t0ueIz/JuEamV93ZLWHA/CXEkVZdxN9iHwG', 'admin'),
-  ('kontakt@rent-aboco.pl', '$2b$12$M4y/aunORpTPY8XN5xryf.T1OkZlAwG1WdQZC/gjKNC5a9hEGvm9u', 'user')
-ON DUPLICATE KEY UPDATE
-  password_hash = VALUES(password_hash),
-  role = VALUES(role);

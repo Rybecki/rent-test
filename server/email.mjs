@@ -2,8 +2,7 @@ import nodemailer from 'nodemailer'
 import { buildPdfFileName, buildSignedPdfBuffer } from './pdf.mjs'
 import { formatInvoiceTextLines } from './validate-invoice.mjs'
 
-const BIURO_EMAIL = 'biuro@ja-yhymm.pl'
-
+const DEFAULT_OFFICE_EMAIL = 'kontakt@rentally.pl'
 
 function getNotifyEmails() {
   const fromEnv = [process.env.NOTIFY_EMAILS, process.env.OFFICE_EMAIL]
@@ -11,13 +10,11 @@ function getNotifyEmails() {
     .join(',')
 
   const emails = new Set(
-    (fromEnv || `${BIURO_EMAIL},kontakt@rent-aboco.pl`)
+    (fromEnv || DEFAULT_OFFICE_EMAIL)
       .split(',')
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean),
   )
-
-  emails.add(BIURO_EMAIL)
 
   return [...emails]
 }

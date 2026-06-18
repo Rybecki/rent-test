@@ -21,7 +21,7 @@ if ($sessionPath === '') {
     $sessionPath = ($base === '/' || $base === '.') ? '/' : rtrim($base, '/') . '/';
 }
 
-session_name('rentaboco_sid');
+session_name('rentally_sid');
 session_set_cookie_params([
     'lifetime' => 7 * 24 * 60 * 60,
     'path' => $sessionPath,

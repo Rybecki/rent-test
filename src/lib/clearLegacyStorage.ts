@@ -2,6 +2,8 @@ const LEGACY_DOCUMENT_KEYS = [
   'cherrysign-documents-v1',
   'cherrysign-auth',
   'cherrysign-docs-auth',
+  'rentaboco-session',
+  'rentaboco-documents-v1',
 ]
 
 export function clearLegacyDocumentStorage() {

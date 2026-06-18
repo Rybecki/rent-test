@@ -3,8 +3,8 @@ import { DEV_AUTH_USER, SKIP_AUTH } from '../appConfig'
 import type { CreateDocumentResponse } from './apiTypes'
 import { ApiError } from './apiError'
 
-const SESSION_KEY = 'rentaboco-session'
-const DOCUMENTS_KEY = 'rentaboco-documents-v1'
+const SESSION_KEY = 'rentally-session'
+const DOCUMENTS_KEY = 'rentally-documents-v1'
 
 function getTestUsers(): { email: string; password: string; role: AuthUser['role'] }[] {
   const email = import.meta.env.VITE_DEMO_USER_EMAIL?.trim().toLowerCase()

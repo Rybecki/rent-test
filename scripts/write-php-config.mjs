@@ -5,6 +5,7 @@ import { loadEnv } from './load-env.mjs'
 
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = join(__dirname, '..')
+const DEFAULT_OFFICE_EMAIL = 'kontakt@rentally.pl'
 
 loadEnv()
 
@@ -17,22 +18,13 @@ function phpBool(value) {
   return v ? 'true' : 'false'
 }
 
-const notify = [
-  process.env.NOTIFY_EMAILS,
-  process.env.OFFICE_EMAIL,
-  'biuro@ja-yhymm.pl',
-]
+const notify = [process.env.NOTIFY_EMAILS, process.env.OFFICE_EMAIL]
   .filter(Boolean)
   .join(',')
   .split(',')
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean)
-const notifyUnique = [...new Set(notify)].join(',')
-
-let smtpHost = process.env.SMTP_HOST || 'mail.ja-yhymm.pl'
-if (smtpHost.includes('cyber-folks') && process.env.SMTP_USER?.includes('@')) {
-  smtpHost = 'mail.ja-yhymm.pl'
-}
+const notifyUnique = [...new Set(notify)].join(',') || DEFAULT_OFFICE_EMAIL
 
 const config = `<?php
 
@@ -40,20 +32,20 @@ return [
     'db' => [
         'host' => 'localhost',
         'port' => ${Number(process.env.DB_PORT || 3306)},
-        'name' => ${phpStr(process.env.DB_NAME || 'wooyek_rent-aboco')},
-        'user' => ${phpStr(process.env.DB_USER || 'wooyek_admin')},
+        'name' => ${phpStr(process.env.DB_NAME || '')},
+        'user' => ${phpStr(process.env.DB_USER || '')},
         'pass' => ${phpStr(process.env.DB_PASSWORD || '')},
     ],
     'client_origin' => '',
     'session_path' => '',
-    'smtp_host' => ${phpStr(smtpHost)},
+    'smtp_host' => ${phpStr(process.env.SMTP_HOST || '')},
     'smtp_port' => ${Number(process.env.SMTP_PORT || 465)},
     'smtp_secure' => ${phpBool(process.env.SMTP_SECURE ?? 'true')},
     'smtp_user' => ${phpStr(process.env.SMTP_USER || '')},
     'smtp_pass' => ${phpStr(process.env.SMTP_PASS || '')},
-    'mail_from' => ${phpStr(process.env.SMTP_FROM || '"Rentally" <kontakt@rent-aboco.pl>')},
+    'mail_from' => ${phpStr(process.env.SMTP_FROM || `"Rentally" <${DEFAULT_OFFICE_EMAIL}>`)},
     'notify_emails' => ${phpStr(notifyUnique)},
-    'office_email' => ${phpStr(process.env.OFFICE_EMAIL || 'kontakt@rent-aboco.pl')},
+    'office_email' => ${phpStr(process.env.OFFICE_EMAIL || DEFAULT_OFFICE_EMAIL)},
 ];
 `
 

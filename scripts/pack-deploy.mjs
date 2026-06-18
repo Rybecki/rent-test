@@ -87,17 +87,17 @@ writeFileSync(
 
 writeFileSync(
   join(out, 'WGRYWANIE.txt'),
-  `SCIEZKA: /domains/rent-aboco.pl/public_html/
+  `SCIEZKA: /domains/twoja-domena.pl/public_html/
 
 Wgraj cala zawartosc tego folderu (nadpisz pliki).
 
 api/config.php zawiera SMTP i baze z lokalnego .env (host bazy na serwerze: localhost).
 
 Jesli brak api/vendor: SSH
-cd /domains/rent-aboco.pl/public_html/api
+cd /domains/twoja-domena.pl/public_html/api
 composer install
 
-Test: https://rent-aboco.pl/api/health
+Test: https://twoja-domena.pl/api/health
 `,
   'utf8',
 )

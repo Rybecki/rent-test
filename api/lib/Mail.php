@@ -6,7 +6,7 @@ use PHPMailer\PHPMailer\PHPMailer;
 
 final class Mail
 {
-    private const BIURO_EMAIL = 'biuro@ja-yhymm.pl';
+    private const DEFAULT_OFFICE_EMAIL = 'kontakt@rentally.pl';
 
     public static function sendSignedDocumentEmails(array $doc, array $config): array
     {
@@ -19,7 +19,7 @@ final class Mail
             return ['sent' => false, 'reason' => 'pdf_not_configured'];
         }
 
-        $from = (string) ($config['mail_from'] ?? ('"Rentally" <' . self::BIURO_EMAIL . '>'));
+        $from = (string) ($config['mail_from'] ?? ('"Rentally" <' . self::DEFAULT_OFFICE_EMAIL . '>'));
         $subject = 'Rentally — potwierdzenie podpisu: ' . ($doc['equipmentLabel'] ?? '');
         $text = self::buildBodyText($doc);
         $notifyEmails = self::getNotifyEmails($config);
@@ -165,7 +165,7 @@ final class Mail
             (string) ($config['notify_emails'] ?? ''),
             (string) ($config['office_email'] ?? ''),
         ]);
-        $raw = $parts !== [] ? implode(',', $parts) : (self::BIURO_EMAIL . ',kontakt@rent-aboco.pl');
+        $raw = $parts !== [] ? implode(',', $parts) : self::DEFAULT_OFFICE_EMAIL;
         $emails = [];
         foreach (explode(',', $raw) as $part) {
             $e = strtolower(trim($part));
@@ -173,7 +173,6 @@ final class Mail
                 $emails[$e] = true;
             }
         }
-        $emails[strtolower(self::BIURO_EMAIL)] = true;
         return array_keys($emails);
     }
 }

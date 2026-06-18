@@ -28,7 +28,7 @@ try {
     console.error('Odmowa dostępu MySQL.')
     console.error('  Użytkownik:', DB_USER, '| host:', host)
     console.error(
-      '  W panelu CyberFolks dodaj zdalny dostęp MySQL dla swojego IP',
+      '  W panelu hostingu dodaj zdalny dostęp MySQL dla swojego IP',
     )
     console.error('  (lub zaktualizuj DB_PASSWORD w pliku .env).')
   } else {

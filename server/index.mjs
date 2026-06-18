@@ -36,7 +36,7 @@ app.use(
 app.use(express.json({ limit: '15mb' }))
 app.use(
   session({
-    name: 'rentaboco.sid',
+    name: 'rentally.sid',
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
@@ -67,10 +67,10 @@ function requireAdmin(req, res, next) {
 
 function dbErrorMessage(err) {
   if (err?.code === 'ER_ACCESS_DENIED_ERROR') {
-    return 'Brak dostępu do bazy MySQL (zły login/hasło lub IP nie jest dozwolone w panelu CyberFolks).'
+    return 'Brak dostępu do bazy MySQL (zły login/hasło lub IP nie jest dozwolone w panelu hostingu).'
   }
   if (err?.code === 'ETIMEDOUT' || err?.code === 'ECONNREFUSED') {
-    return 'Nie można połączyć się z serwerem bazy — sprawdź DB_HOST w pliku .env (użyj IP 91.237.52.213).'
+    return 'Nie można połączyć się z serwerem bazy — sprawdź DB_HOST w pliku .env.'
   }
   return 'Błąd połączenia z bazą danych.'
 }
@@ -142,7 +142,7 @@ app.post('/api/auth/logout', (req, res) => {
       res.status(500).json({ error: 'Nie udało się wylogować' })
       return
     }
-    res.clearCookie('rentaboco.sid')
+    res.clearCookie('rentally.sid')
     res.json({ ok: true })
   })
 })
@@ -366,7 +366,7 @@ async function start() {
     console.error('Baza danych: BŁĄD —', dbErrorMessage(err))
     if (err?.code === 'ER_ACCESS_DENIED_ERROR') {
       console.error(
-        '  → Panel CyberFolks: MySQL → dostęp zdalny / whitelist IP (Twoje IP może się zmieniać).',
+        '  → Panel hostingu: MySQL → dostęp zdalny / whitelist IP (Twoje IP może się zmieniać).',
       )
     }
   }
