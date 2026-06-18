@@ -77,40 +77,40 @@ function DocumentCard({ document: d }: { document: SignedDocument }) {
     >
       <button
         type="button"
-        className="flex w-full flex-col gap-4 p-4 text-left transition-colors duration-200 hover:bg-primary/[0.06] sm:p-5"
+        className="w-full p-4 text-left transition-colors duration-200 hover:bg-primary/[0.06] sm:p-5"
         aria-expanded={expanded}
         aria-controls={panelId}
         onClick={() => setExpanded((open) => !open)}
       >
-        <div className="flex flex-col gap-3 pr-8">
-          <time
-            dateTime={d.signedAt}
-            className="text-xs font-medium leading-tight text-white sm:text-sm"
-          >
-            {formatSignedAt(d.signedAt)}
-          </time>
+        <time
+          dateTime={d.signedAt}
+          className="mb-3 block text-xs font-medium leading-tight text-white sm:text-sm"
+        >
+          {formatSignedAt(d.signedAt)}
+        </time>
+
+        <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto] items-end gap-x-3 gap-y-1 sm:gap-x-4">
           <SummaryField title="Wynajmujący">
             {formatFullName(d.firstName, d.lastName)}
           </SummaryField>
           <SummaryField title="Przedmiot wynajmu">{d.equipmentLabel}</SummaryField>
-        </div>
-
-        <div className="flex items-center justify-end gap-2 border-t border-primary/25 pt-3">
-          <span
-            className={`text-[11px] font-medium uppercase tracking-wide text-primary/80 transition-opacity duration-200 ${
-              expanded ? 'opacity-100' : 'opacity-80'
-            }`}
-          >
-            {expanded ? 'Zwiń' : 'Szczegóły'}
-          </span>
-          <ChevronDown
-            size={20}
-            strokeWidth={2.25}
-            aria-hidden
-            className={`shrink-0 text-primary transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
-              expanded ? 'rotate-180' : 'rotate-0'
-            }`}
-          />
+          <div className="flex shrink-0 items-center gap-1.5 self-end pb-0.5">
+            <span
+              className={`text-[11px] font-medium uppercase tracking-wide text-primary/80 transition-opacity duration-200 ${
+                expanded ? 'opacity-100' : 'opacity-80'
+              }`}
+            >
+              {expanded ? 'Zwiń' : 'Szczegóły'}
+            </span>
+            <ChevronDown
+              size={20}
+              strokeWidth={2.25}
+              aria-hidden
+              className={`shrink-0 text-primary transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+                expanded ? 'rotate-180' : 'rotate-0'
+              }`}
+            />
+          </div>
         </div>
       </button>
 
