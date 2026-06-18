@@ -1301,7 +1301,7 @@ function SuccessModal({ onClose }: { onClose: () => void }) {
             pobrać PDF.
           </p>
           <p className="rounded-xl border border-primary/20 bg-primary/5 px-3 py-2.5 text-center text-sm leading-relaxed text-white/70">
-            W działającej wersji aplikacji kopia dokumentu zostanie wysłana e-mailem do
+            W pełnej wersji aplikacji kopia dokumentu zostanie wysłana e-mailem do
             obsługi oraz do klienta.
           </p>
           <button

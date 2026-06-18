@@ -71,13 +71,13 @@ function DocumentCard({ document: d }: { document: SignedDocument }) {
 
   return (
     <li
-      className={`overflow-hidden rounded-2xl border-2 border-primary bg-white/[0.04] shadow-[0_0_18px_rgba(255,117,31,0.14)] transition-shadow ${
+      className={`overflow-hidden rounded-2xl border-2 border-primary bg-white/[0.04] shadow-[0_0_18px_rgba(255,117,31,0.14)] transition-[box-shadow,border-color] duration-300 ease-out ${
         expanded ? 'shadow-[0_0_24px_rgba(255,117,31,0.22)]' : ''
       }`}
     >
       <button
         type="button"
-        className="flex w-full flex-col gap-4 p-4 text-left transition hover:bg-primary/[0.06] sm:p-5"
+        className="flex w-full flex-col gap-4 p-4 text-left transition-colors duration-200 hover:bg-primary/[0.06] sm:p-5"
         aria-expanded={expanded}
         aria-controls={panelId}
         onClick={() => setExpanded((open) => !open)}
@@ -96,25 +96,40 @@ function DocumentCard({ document: d }: { document: SignedDocument }) {
         </div>
 
         <div className="flex items-center justify-end gap-2 border-t border-primary/25 pt-3">
-          <span className="text-[11px] font-medium uppercase tracking-wide text-primary/80">
+          <span
+            className={`text-[11px] font-medium uppercase tracking-wide text-primary/80 transition-opacity duration-200 ${
+              expanded ? 'opacity-100' : 'opacity-80'
+            }`}
+          >
             {expanded ? 'Zwiń' : 'Szczegóły'}
           </span>
           <ChevronDown
             size={20}
             strokeWidth={2.25}
             aria-hidden
-            className={`shrink-0 text-primary transition-transform duration-200 ${
-              expanded ? 'rotate-180' : ''
+            className={`shrink-0 text-primary transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+              expanded ? 'rotate-180' : 'rotate-0'
             }`}
           />
         </div>
       </button>
 
-      {expanded && (
-        <div
-          id={panelId}
-          className="flex flex-col gap-5 border-t border-primary/30 bg-black/15 px-4 pb-5 pt-4 sm:px-5"
-        >
+      <div
+        id={panelId}
+        className={`grid transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${
+          expanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+        }`}
+        aria-hidden={!expanded}
+      >
+        <div className="min-h-0 overflow-hidden">
+          <div
+            className={`flex flex-col gap-5 border-t border-primary/30 bg-black/15 px-4 pb-5 pt-4 transition-[opacity,transform] duration-300 ease-out sm:px-5 ${
+              expanded
+                ? 'translate-y-0 opacity-100 delay-75'
+                : '-translate-y-1 opacity-0'
+            }`}
+            inert={expanded ? undefined : true}
+          >
           <dl className="m-0 grid grid-cols-[minmax(0,38%)_1fr] gap-x-4 gap-y-2 text-sm">
             <DetailRow title="Wynajmujący">
               {formatFullName(d.firstName, d.lastName)}
@@ -196,8 +211,9 @@ function DocumentCard({ document: d }: { document: SignedDocument }) {
           >
             Pobierz PDF
           </button>
+          </div>
         </div>
-      )}
+      </div>
     </li>
   )
 }
