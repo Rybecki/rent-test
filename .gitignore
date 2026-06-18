@@ -12,7 +12,6 @@ dist
 tmp/
 .env
 .env.*
-!.env.example
 api/config.php
 api/vendor/
 deploy/public_html/
