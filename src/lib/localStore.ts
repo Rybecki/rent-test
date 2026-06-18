@@ -6,10 +6,12 @@ import { ApiError } from './apiError'
 const SESSION_KEY = 'rentaboco-session'
 const DOCUMENTS_KEY = 'rentaboco-documents-v1'
 
-const TEST_USERS: { email: string; password: string; role: AuthUser['role'] }[] =
-  [
-    { email: 'kontakt@rentally.pl', password: '123', role: 'admin' },
-  ]
+function getTestUsers(): { email: string; password: string; role: AuthUser['role'] }[] {
+  const email = import.meta.env.VITE_DEMO_USER_EMAIL?.trim().toLowerCase()
+  const password = import.meta.env.VITE_DEMO_USER_PASSWORD
+  if (!email || !password) return []
+  return [{ email, password, role: 'admin' }]
+}
 
 function readJson<T>(key: string, fallback: T): T {
   if (typeof localStorage === 'undefined') return fallback
@@ -50,7 +52,7 @@ export const localAuthApi = {
 
   login(email: string, password: string): AuthUser {
     const normalized = email.trim().toLowerCase()
-    const match = TEST_USERS.find(
+    const match = getTestUsers().find(
       (u) => u.email === normalized && u.password === password,
     )
     if (!match) {

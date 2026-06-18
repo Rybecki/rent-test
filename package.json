@@ -26,7 +26,11 @@
     "test:api": "node scripts/test-api-documents.mjs",
     "test:pdf": "node scripts/test-pdf-sample.mjs",
     "pack:deploy": "npm run build && node scripts/pack-deploy.mjs",
-    "pack:server": "npm run pack:deploy"
+    "pack:server": "npm run pack:deploy",
+    "check:secrets": "node scripts/check-secrets.mjs --all",
+    "check:secrets:staged": "node scripts/check-secrets.mjs",
+    "install:hooks": "node scripts/install-githooks.mjs",
+    "prepare": "node scripts/install-githooks.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
